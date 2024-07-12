@@ -4,15 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TemplateTest.Infrastructure.Data.Configurations;
 
-public class TodoListConfiguration : IEntityTypeConfiguration<TodoList>
+public class TodoListConfiguration : IEntityTypeConfiguration<ToDoItem>
 {
-    public void Configure(EntityTypeBuilder<TodoList> builder)
+    public void Configure(EntityTypeBuilder<ToDoItem> builder)
     {
         builder.Property(t => t.Title)
             .HasMaxLength(200)
             .IsRequired();
 
-        builder
-            .OwnsOne(b => b.Colour);
+      
     }
 }

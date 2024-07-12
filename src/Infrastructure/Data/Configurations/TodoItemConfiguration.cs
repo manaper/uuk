@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TemplateTest.Infrastructure.Data.Configurations;
 
-public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
+public class TodoItemConfiguration : IEntityTypeConfiguration<ToDoItem>
 {
-    public void Configure(EntityTypeBuilder<TodoItem> builder)
+    public void Configure(EntityTypeBuilder<ToDoItem> builder)
     {
         builder.Property(t => t.Title)
             .HasMaxLength(200)

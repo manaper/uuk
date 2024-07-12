@@ -1,17 +1,24 @@
-﻿using TemplateTest.Application.Common.Interfaces;
+﻿using Microsoft.VisualBasic;
+using TemplateTest.Application.Common.Interfaces;
 using TemplateTest.Domain.Entities;
+using TemplateTest.Domain.Enums;
 using TemplateTest.Domain.Events;
 
 namespace TemplateTest.Application.TodoItems.Commands.CreateTodoItem;
 
-public record CreateTodoItemCommand : IRequest<int>
+public record CreateTodoItemCommand : IRequest<Guid>
 {
-    public int ListId { get; init; }
-
-    public string? Title { get; init; }
+    public int Id { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public bool IsCompleted { get; set; }
+    public DateTime DueDate { get; set; }
+    public int Priority { get; set; }
+    public User? User { get; set; }
+   
 }
 
-public class CreateTodoItemCommandHandler : IRequestHandler<CreateTodoItemCommand, int>
+public class CreateTodoItemCommandHandler : IRequestHandler<CreateTodoItemCommand, Guid>
 {
     private readonly IApplicationDbContext _context;
 
@@ -20,21 +27,24 @@ public class CreateTodoItemCommandHandler : IRequestHandler<CreateTodoItemComman
         _context = context;
     }
 
-    public async Task<int> Handle(CreateTodoItemCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateTodoItemCommand request, CancellationToken cancellationToken)
     {
-        var entity = new TodoItem
+        ToDoItem item = new ToDoItem()
         {
-            ListId = request.ListId,
+            Id = Guid.NewGuid(),
             Title = request.Title,
-            Done = false
+            Description = request.Description,
+            IsCompleted = request.IsCompleted,
+            DueDate = request.DueDate,
+            Priority = request.Priority,
+            User = request.User,
+
         };
 
-        entity.AddDomainEvent(new TodoItemCreatedEvent(entity));
-
-        _context.TodoItems.Add(entity);
+       
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.Id;
+        return item.Id;
     }
 }

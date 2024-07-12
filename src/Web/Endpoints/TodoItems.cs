@@ -1,4 +1,4 @@
-﻿using Commands.CreateRequestCommand;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using TemplateTest.Application.Common.Models;
 using TemplateTest.Application.TodoItems.Commands.CreateTodoItem;
@@ -22,25 +22,18 @@ public class TodoItems : EndpointGroupBase
             .MapDelete(DeleteTodoItem, "{id}");
     }
    
-    [HttpPost, Route("createRequest")]
-    [Consumes("multipart/form-data")]
-    [Produces("application/json")]
-    public async Task<Unit> Create(ISender sender, [FromForm] CreateRequestCommand command)
-    {
-        return await sender.Send(command);
-    }
-
+   
     public Task<PaginatedList<TodoItemBriefDto>> GetTodoItemsWithPagination(ISender sender, [AsParameters] GetTodoItemsWithPaginationQuery query)
     {
         return sender.Send(query);
     }
 
-    public Task<int> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
+    public Task<Guid> CreateTodoItem(ISender sender, CreateTodoItemCommand command)
     {
         return sender.Send(command);
     }
 
-    public async Task<IResult> UpdateTodoItem(ISender sender, int id, UpdateTodoItemCommand command)
+    public async Task<IResult> UpdateTodoItem(ISender sender, Guid id, UpdateTodoItemCommand command)
     {
         if (id != command.Id) return Results.BadRequest();
         await sender.Send(command);

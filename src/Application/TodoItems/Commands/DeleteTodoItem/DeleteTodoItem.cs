@@ -3,7 +3,7 @@ using TemplateTest.Domain.Events;
 
 namespace TemplateTest.Application.TodoItems.Commands.DeleteTodoItem;
 
-public record DeleteTodoItemCommand(int Id) : IRequest;
+public record DeleteTodoItemCommand(Guid Id) : IRequest;
 
 public class DeleteTodoItemCommandHandler : IRequestHandler<DeleteTodoItemCommand>
 {
@@ -16,14 +16,13 @@ public class DeleteTodoItemCommandHandler : IRequestHandler<DeleteTodoItemComman
 
     public async Task Handle(DeleteTodoItemCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id }, cancellationToken);
+        var entity =  _context.TodoItems
+            .Where(x => x.Id == request.Id).FirstOrDefault();
 
-        Guard.Against.NotFound(request.Id, entity);
 
         _context.TodoItems.Remove(entity);
 
-        entity.AddDomainEvent(new TodoItemDeletedEvent(entity));
+       
 
         await _context.SaveChangesAsync(cancellationToken);
     }

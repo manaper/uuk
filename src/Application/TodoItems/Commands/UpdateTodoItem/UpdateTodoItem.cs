@@ -1,14 +1,17 @@
 ﻿using TemplateTest.Application.Common.Interfaces;
+using TemplateTest.Domain.Entities;
 
 namespace TemplateTest.Application.TodoItems.Commands.UpdateTodoItem;
 
 public record UpdateTodoItemCommand : IRequest
 {
-    public int Id { get; init; }
-
-    public string? Title { get; init; }
-
-    public bool Done { get; init; }
+    public Guid Id { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
+    public bool IsCompleted { get; set; }
+    public DateTime DueDate { get; set; }
+    public int Priority { get; set; }
+    public User? User { get; set; }
 }
 
 public class UpdateTodoItemCommandHandler : IRequestHandler<UpdateTodoItemCommand>
@@ -22,13 +25,16 @@ public class UpdateTodoItemCommandHandler : IRequestHandler<UpdateTodoItemComman
 
     public async Task Handle(UpdateTodoItemCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.TodoItems
-            .FindAsync(new object[] { request.Id }, cancellationToken);
-
-        Guard.Against.NotFound(request.Id, entity);
-
+        ToDoItem entity = await _context.TodoItems.Where(x => x.Id == request.Id).FirstAsync();
+           
         entity.Title = request.Title;
-        entity.Done = request.Done;
+        entity.Description = request.Description;   
+        entity.IsCompleted = request.IsCompleted;
+        entity.DueDate = request.DueDate;
+        entity.Priority = request.Priority;
+        entity.User = request.User;
+
+      
 
         await _context.SaveChangesAsync(cancellationToken);
     }

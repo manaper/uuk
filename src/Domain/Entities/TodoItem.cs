@@ -1,31 +1,22 @@
-﻿namespace TemplateTest.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class TodoItem : BaseAuditableEntity
+public class ToDoItem
 {
-    public int ListId { get; set; }
+    public Guid Id { get; set; }
 
+    [Required]
     public string? Title { get; set; }
 
-    public string? Note { get; set; }
+    public string? Description { get; set; }
 
-    public PriorityLevel Priority { get; set; }
+    public bool IsCompleted { get; set; }
 
-    public DateTime? Reminder { get; set; }
+    public DateTime DueDate { get; set; }
 
-    private bool _done;
-    public bool Done
-    {
-        get => _done;
-        set
-        {
-            if (value && !_done)
-            {
-                AddDomainEvent(new TodoItemCompletedEvent(this));
-            }
+    [Range(1, 5)]
+    public int Priority { get; set; }
 
-            _done = value;
-        }
-    }
+    public int UserId { get; set; }
 
-    public TodoList List { get; set; } = null!;
+    public User? User { get; set; }
 }
